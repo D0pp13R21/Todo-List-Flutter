@@ -78,6 +78,7 @@ class _TodoListPageState extends State<TodoListPage> {
                               dateTime: DateTime.now(),
                             );
                             todos.add(newTodo);
+                            errorText = null;
                           });
                           todoController.clear();
                           todoRepository.saveTodoList(todos);
