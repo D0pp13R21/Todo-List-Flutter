@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list_flutter/models/todo.dart';
+import 'package:todo_list_flutter/repositories/todo_repository.dart';
 
 import '../widgets/todo_list_item.dart';
 
@@ -12,6 +13,7 @@ class TodoListPage extends StatefulWidget {
 
 class _TodoListPageState extends State<TodoListPage> {
   final TextEditingController todoController = TextEditingController();
+  final TodoRepository todoRepository = TodoRepository();
 
   List<Todo> todos = [];
 
@@ -19,6 +21,17 @@ class _TodoListPageState extends State<TodoListPage> {
   void onDelete(Todo todo) {
     setState(() {
       todos.remove(todo); // Remove o item da lista
+    });
+    todoRepository.saveTodoList(todos); // Salva a lista atualizada
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    todoRepository.getTodoList().then((value) {
+      setState(() {
+        todos = value;
+      });
     });
   }
 
@@ -57,6 +70,7 @@ class _TodoListPageState extends State<TodoListPage> {
                             todos.add(newTodo);
                           });
                           todoController.clear();
+                          todoRepository.saveTodoList(todos);
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -79,7 +93,7 @@ class _TodoListPageState extends State<TodoListPage> {
                         TodoListItem(
                           todo: todo,
                           onDelete:
-                          onDelete, // Passa a função para o widget filho
+                              onDelete, // Passa a função para o widget filho
                         ),
                     ],
                   ),
@@ -98,6 +112,8 @@ class _TodoListPageState extends State<TodoListPage> {
                         setState(() {
                           todos.clear(); // Limpa todas as tarefas
                         });
+                        todoRepository
+                            .saveTodoList(todos); // Salva a lista vazia
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xff00d7f3),
