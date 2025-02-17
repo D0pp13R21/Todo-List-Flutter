@@ -17,6 +17,8 @@ class _TodoListPageState extends State<TodoListPage> {
 
   List<Todo> todos = [];
 
+  String? errorText;
+
   // Corrigido: Remove o todo da lista e atualiza a interface
   void onDelete(Todo todo) {
     setState(() {
@@ -50,10 +52,11 @@ class _TodoListPageState extends State<TodoListPage> {
                     Expanded(
                       child: TextField(
                         controller: todoController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
                           labelText: 'Adicione uma tarefa',
                           hintText: 'Ex. Estudar Flutter',
+                          errorText: errorText,
                         ),
                       ),
                     ),
@@ -61,6 +64,13 @@ class _TodoListPageState extends State<TodoListPage> {
                     ElevatedButton(
                       onPressed: () {
                         String text = todoController.text;
+
+                        if (text.isEmpty) {
+                          setState(() {
+                            errorText = 'Campo obrigatório';
+                          });
+                          return;
+                        }
                         if (text.isNotEmpty) {
                           setState(() {
                             Todo newTodo = Todo(
